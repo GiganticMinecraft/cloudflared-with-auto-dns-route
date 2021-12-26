@@ -39,7 +39,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: .image-definition
+          context: ./image-definition
           push: true
           tags: |
             ${{ steps.prepare_image_id.outputs.lowercase_id }}:latest
