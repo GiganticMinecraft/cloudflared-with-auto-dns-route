@@ -4,9 +4,9 @@ A variant of [cloudflared](https://github.com/cloudflare/cloudflared) image that
 
 ## Usage
 
-Replace `<mount-base>` with your preffered path, then write
+Replace `<mount-base>` with your preffered path (either absolute, or relative from workdir of docker compose), then write
 
-`/<mount-base>/tunnel-config.yml`:
+`<mount-base>/tunnel-config.yml`:
 
 ```YAML
 ingress:
@@ -30,7 +30,7 @@ services:
     image: "ghcr.io/giganticminecraft/cloudflared-with-auto-dns-route"
     volumes:
       - cloudflared-home:/root
-      - /<mount-base>/tunnel-config.yml:/image/tunnel-config.yml
+      - <mount-base>/tunnel-config.yml:/image/tunnel-config.yml
 ```
 
 Upon `docker compose up`, `cloudflared` container should ask you to login to Cloudflare.
