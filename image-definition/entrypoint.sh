@@ -77,7 +77,7 @@ tunnel_id=$(get_available_tunnel_id)
 # re-route all domains in ingress-rules to this tunnel.
 echo "Re-routing all domains to the tunnel..."
 yq e ".ingress.[] | select(.hostname != null) | .hostname" /tmp/tunnel-config.yml \
-  | xargs -n 1 cloudflared tunnel route dns --overwrite-dns $tunnel_id
+  | xargs -n 1 cloudflared tunnel route dns --overwrite-dns "$tunnel_id"
 
 # start the tunnel
 echo "Starting the tunnel"
