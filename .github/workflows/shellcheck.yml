@@ -3,7 +3,7 @@ name: shellcheck
 on:
   pull_request:
     paths:
-      - "image-definition/entrypoint.sh"
+      - "*.sh"
 
 jobs:
   shellcheck:
