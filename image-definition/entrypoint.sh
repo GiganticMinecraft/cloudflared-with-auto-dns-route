@@ -57,7 +57,9 @@ ingress:
 fi
 
 if [ -n ${CLOUDFLARED_HOSTNAME+found} ] && [ -n ${CLOUDFLARED_SERVICE+found} ]; then
-  # FIXME append HOSTNAME/SERVICE to /tmp/tunnel-config.yml
+  yq eval -i \
+    '.ingress = [{ "hostname": strenv(CLOUDFLARED_HOSTNAME), "service": strenv(CLOUDFLARED_SERVICE) }] + .ingress' \
+    /tmp/tunnel-config.yml
 fi
 
 # login if cert.pem not found
