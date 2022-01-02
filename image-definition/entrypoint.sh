@@ -56,7 +56,7 @@ ingress:
 """ > /tmp/tunnel-config.yml
 fi
 
-if [ -n ${CLOUDFLARED_HOSTNAME+found} ] && [ -n ${CLOUDFLARED_SERVICE+found} ]; then
+if [ -n "${CLOUDFLARED_HOSTNAME+found}" ] && [ -n "${CLOUDFLARED_SERVICE+found}" ]; then
   yq eval -i \
     '.ingress = [{ "hostname": strenv(CLOUDFLARED_HOSTNAME), "service": strenv(CLOUDFLARED_SERVICE) }] + .ingress' \
     /tmp/tunnel-config.yml
