@@ -81,4 +81,4 @@ yq e ".ingress.[] | select(.hostname != null) | .hostname" /tmp/tunnel-config.ym
 
 # start the tunnel
 echo "Starting the tunnel"
-cloudflared tunnel --config /tmp/tunnel-config.yml --no-autoupdate run $tunnel_id
+cloudflared tunnel --config /tmp/tunnel-config.yml --no-autoupdate run "$tunnel_id"
