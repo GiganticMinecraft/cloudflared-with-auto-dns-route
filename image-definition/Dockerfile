@@ -6,10 +6,8 @@ COPY --from=cloudflared-binary /usr/local/bin/cloudflared /usr/local/bin/
 
 # install yq (see https://github.com/mikefarah/yq/tree/d8abcce633abe7e73ea70ba539b59836505850f1#install)
 RUN wget https://github.com/mikefarah/yq/releases/download/v4.16.1/yq_linux_amd64.tar.gz -O -\
-    | tar xz && mv yq_linux_amd64 /usr/bin/yq
+    | tar xz && mv yq_linux_amd64 /usr/local/bin/yq
 
-RUN mkdir -p /image
+COPY ./entrypoint.sh /entrypoint.sh
 
-COPY ./entrypoint.sh /image/entrypoint.sh
-
-ENTRYPOINT [ "/image/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint.sh" ]

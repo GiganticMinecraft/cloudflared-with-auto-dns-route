@@ -3,7 +3,7 @@ name: shellcheck
 on:
   pull_request:
     paths:
-      - "image-definition/entrypoint.sh"
+      - "**.sh"
 
 jobs:
   shellcheck:
@@ -17,4 +17,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
-          pattern: "image-definition/entrypoint.sh"
+          pattern: "*.sh"
