@@ -41,26 +41,29 @@ if ! command -v yq > /dev/null 2>&1; then
   exit 1
 fi
 
-if [ -f /tmp/tunnel-config.yml ]; then
-  echo "tunnel-config.yml already present at /tmp/tunnel-config.yml, but this is unexpected."
-  echo "Consider mounting your tunnel-config.yml at /etc/tunnel-config.yml instead."
+input_tunnel_config_path=/etc/cloudflared/tunnel-config.yml
+tmp_tunnel_config_path=/tmp/tunnel-config.yml
+
+if [ -f "$tmp_tunnel_config_path" ]; then
+  echo "tunnel-config.yml already present at ${tmp_tunnel_config_path}, but this is unexpected."
+  echo "Consider mounting your tunnel-config.yml at ${input_tunnel_config_path} instead."
 fi
 
-if [ -f /etc/tunnel-config.yml ]; then
-  echo "Using tunnel-config.yml provided at /etc/tunnel-config.yml"
-  cp /etc/tunnel-config.yml /tmp/tunnel-config.yml
+if [ -f "$input_tunnel_config_path" ]; then
+  echo "Using tunnel-config.yml provided at ${input_tunnel_config_path}"
+  cp "$input_tunnel_config_path" "$tmp_tunnel_config_path"
 else
-  echo "/etc/tunnel-config.yml not found, using a fresh one without any nontrivial routes."
+  echo "${input_tunnel_config_path} not found, using a fresh one without any nontrivial routes."
   echo """
 ingress:
   - service: http_status:404
-""" > /tmp/tunnel-config.yml
+""" > "$tmp_tunnel_config_path"
 fi
 
 if [ -n "${CLOUDFLARED_HOSTNAME+found}" ] && [ -n "${CLOUDFLARED_SERVICE+found}" ]; then
   yq eval -i \
     '.ingress = [{ "hostname": strenv(CLOUDFLARED_HOSTNAME), "service": strenv(CLOUDFLARED_SERVICE) }] + .ingress' \
-    /tmp/tunnel-config.yml
+    "$tmp_tunnel_config_path"
 fi
 
 # login if cert.pem not found
@@ -77,9 +80,9 @@ tunnel_id=$(get_available_tunnel_id)
 
 # re-route all domains in ingress-rules to this tunnel.
 echo "Re-routing all domains to the tunnel..."
-yq e ".ingress.[] | select(.hostname != null) | .hostname" /tmp/tunnel-config.yml \
+yq e ".ingress.[] | select(.hostname != null) | .hostname" "$tmp_tunnel_config_path" \
   | xargs -n 1 cloudflared tunnel route dns --overwrite-dns "$tunnel_id"
 
 # start the tunnel
 echo "Starting the tunnel"
-cloudflared tunnel --config /tmp/tunnel-config.yml --no-autoupdate run "$tunnel_id"
+cloudflared tunnel --config "$tmp_tunnel_config_path" --no-autoupdate run "$tunnel_id"
