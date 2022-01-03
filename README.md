@@ -27,7 +27,7 @@ where `local-service-1` and `local-service2` are serving some HTTP contents.
 
 `docker-compose.yml`:
 
-Now mount your `tunnel-config.yml` to `/etc/tunnel-config.yml`:
+Now mount your `tunnel-config.yml` to `/etc/cloudflared/tunnel-config.yml`:
 
 ```YAML
 volumes:
@@ -38,7 +38,7 @@ services:
     image: "ghcr.io/giganticminecraft/cloudflared-with-auto-dns-route"
     volumes:
       - cloudflared-home:/root
-      - <mount-base>/tunnel-config.yml:/etc/tunnel-config.yml
+      - <mount-base>/tunnel-config.yml:/etc/cloudflared/tunnel-config.yml
 ```
 
 ### Using a pair of environment variables
