@@ -44,8 +44,8 @@ fi
 input_tunnel_config_path=/etc/cloudflared/tunnel-config.yml
 tmp_tunnel_config_path=/tmp/tunnel-config.yml
 
-if [ -f "$tmp_tunnel_config" ]; then
-  echo "tunnel-config.yml already present at ${tmp_tunnel_config}, but this is unexpected."
+if [ -f "$tmp_tunnel_config_path" ]; then
+  echo "tunnel-config.yml already present at ${tmp_tunnel_config_path}, but this is unexpected."
   echo "Consider mounting your tunnel-config.yml at ${input_tunnel_config_path} instead."
 fi
 
