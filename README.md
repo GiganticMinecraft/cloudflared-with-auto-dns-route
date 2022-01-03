@@ -39,6 +39,8 @@ services:
     volumes:
       - cloudflared-home:/root
       - <mount-base>/tunnel-config.yml:/etc/cloudflared/tunnel-config.yml
+    environments:
+      TUNNEL_NAME: example-tunnel-1
 ```
 
 ### Using a pair of environment variables
@@ -57,4 +59,6 @@ services:
       CLOUDFLARED_SERVICE: http://local-service-1:8080
     volumes:
       - cloudflared-home:/root
+    environments:
+      TUNNEL_NAME: example-tunnel-1
 ```

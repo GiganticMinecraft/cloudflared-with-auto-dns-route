@@ -5,7 +5,7 @@ set -e
 # based on
 # https://github.com/kory33/oracle-cloud-gp-servers/blob/ec7e8fa1c8206cdc9fb60b5ebe39aef1a659ae18/services/cloudflared/entrypoint.sh
 
-tunnel_name=seichi_debug_servers-tunnels
+TUNNEL_NAME=${TUNNEL_NAME:-cloudflared_tunnel}
 
 # list tunnel information in yaml format.
 # A typical output is 
@@ -15,12 +15,12 @@ tunnel_name=seichi_debug_servers-tunnels
 #   deletedat: 0001-01-01T00:00:00Z
 #   connections: []
 list_tunnel_as_yaml () {
-  cloudflared tunnel list --name $tunnel_name --output yaml
+  cloudflared tunnel list --name $TUNNEL_NAME --output yaml
 }
 
 recreate_tunnel () {
-  cloudflared tunnel delete -f $tunnel_name || true
-  cloudflared tunnel create $tunnel_name
+  cloudflared tunnel delete -f $TUNNEL_NAME || true
+  cloudflared tunnel create $TUNNEL_NAME
 }
 
 get_available_tunnel_id () {
@@ -65,6 +65,9 @@ if [ -n "${CLOUDFLARED_HOSTNAME+found}" ] && [ -n "${CLOUDFLARED_SERVICE+found}"
     '.ingress = [{ "hostname": strenv(CLOUDFLARED_HOSTNAME), "service": strenv(CLOUDFLARED_SERVICE) }] + .ingress' \
     "$tmp_tunnel_config_path"
 fi
+
+echo "Tunnel configuration to apply:"
+cat "$tmp_tunnel_config_path"
 
 # login if cert.pem not found
 if [ ! -f ~/.cloudflared/cert.pem ]; then
