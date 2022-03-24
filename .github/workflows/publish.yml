@@ -41,6 +41,8 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ steps.prepare_image_id.outputs.lowercase_id }}
+          tags: |
+            type=sha
 
       - name: Build and push
         uses: docker/build-push-action@v2
