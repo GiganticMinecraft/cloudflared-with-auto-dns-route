@@ -70,7 +70,8 @@ echo "Tunnel configuration to apply:"
 cat "$tmp_tunnel_config_path"
 
 # login if cert.pem not found
-if [ ! -f ~/.cloudflared/cert.pem ]; then
+if [ -z "${TUNNEL_ORIGIN_CERT}" ]; then TUNNEL_ORIGIN_CERT="~/.cloudflared/cert.pem"; fi
+if [ ! -f "${TUNNEL_ORIGIN_CERT}" ]; then
   cloudflared tunnel login
 fi
 
