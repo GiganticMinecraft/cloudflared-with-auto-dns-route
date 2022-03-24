@@ -27,15 +27,6 @@ get_available_tunnel_id () {
   list_tunnel_as_yaml | yq eval '.[0].id' -
 }
 
-ensure_tunnel_exists_and_we_have_access () {
-  # recreate tunnel if we don't have a tunnel or the credential to the tunnel
-  if [ "$(get_available_tunnel_id)" = "null" ] ||\
-     [ ! -f "/root/.cloudflared/$(get_available_tunnel_id).json" ]; then    
-    echo "recreating tunnel..."
-    recreate_tunnel
-  fi
-}
-
 if ! command -v yq > /dev/null 2>&1; then
   echo "yq must be installed to run this initialization script"
   exit 1
@@ -78,7 +69,9 @@ fi
 echo "Current tunnel list:"
 list_tunnel_as_yaml
 
-ensure_tunnel_exists_and_we_have_access
+# always recreate the tunnel
+if [ -z "${TUNNEL_CRED_FILE}" ]; then TUNNEL_CRED_FILE="$HOME/.cloudflared/tunnel-cred.json"; fi
+recreate_tunnel
 
 tunnel_id=$(get_available_tunnel_id)
 
