@@ -15,12 +15,12 @@ TUNNEL_NAME=${TUNNEL_NAME:-cloudflared_tunnel}
 #   deletedat: 0001-01-01T00:00:00Z
 #   connections: []
 list_tunnel_as_yaml () {
-  cloudflared tunnel list --name $TUNNEL_NAME --output yaml
+  cloudflared tunnel list --name "$TUNNEL_NAME" --output yaml
 }
 
 recreate_tunnel () {
-  cloudflared tunnel delete -f $TUNNEL_NAME || true
-  cloudflared tunnel create $TUNNEL_NAME
+  cloudflared tunnel delete -f "$TUNNEL_NAME" || true
+  cloudflared tunnel create "$TUNNEL_NAME"
 }
 
 get_available_tunnel_id () {
@@ -70,7 +70,7 @@ echo "Tunnel configuration to apply:"
 cat "$tmp_tunnel_config_path"
 
 # login if cert.pem not found
-if [ -z "${TUNNEL_ORIGIN_CERT}" ]; then TUNNEL_ORIGIN_CERT="~/.cloudflared/cert.pem"; fi
+if [ -z "${TUNNEL_ORIGIN_CERT}" ]; then TUNNEL_ORIGIN_CERT="$HOME/.cloudflared/cert.pem"; fi
 if [ ! -f "${TUNNEL_ORIGIN_CERT}" ]; then
   cloudflared tunnel login
 fi
