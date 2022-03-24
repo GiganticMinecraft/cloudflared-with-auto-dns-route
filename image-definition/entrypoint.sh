@@ -71,6 +71,8 @@ list_tunnel_as_yaml
 
 # always recreate the tunnel
 if [ -z "${TUNNEL_CRED_FILE}" ]; then TUNNEL_CRED_FILE="$HOME/.cloudflared/tunnel-cred.json"; fi
+# cloudflared needs a parent directory for $TUNNEL_CRED_FILE
+mkdir -p "$(dirname ${TUNNEL_CRED_FILE})"
 recreate_tunnel
 
 tunnel_id=$(get_available_tunnel_id)
