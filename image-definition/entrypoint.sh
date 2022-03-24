@@ -46,7 +46,8 @@ if [ ! -f /image/tunnel-config.yml ]; then
 fi
 
 # login if cert.pem not found
-if [ ! -f ~/.cloudflared/cert.pem ]; then
+if [ -z "${TUNNEL_ORIGIN_CERT}" ]; then TUNNEL_ORIGIN_CERT="~/.cloudflared/cert.pem" fi
+if [ ! -f "${TUNNEL_ORIGIN_CERT}" ]; then
   cloudflared tunnel login
 fi
 
