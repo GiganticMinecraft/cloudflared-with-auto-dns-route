@@ -38,7 +38,7 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v3
+        uses: docker/metadata-action@v4
         with:
           images: ${{ steps.prepare_image_id.outputs.lowercase_id }}
           tags: |
