@@ -48,6 +48,7 @@ jobs:
           images: ${{ steps.prepare_image_id.outputs.lowercase_id }}
           tags: |
             type=sha
+            type=raw,value=${{ steps.extract_cloudflared_image_tag.outputs.image_tag }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
