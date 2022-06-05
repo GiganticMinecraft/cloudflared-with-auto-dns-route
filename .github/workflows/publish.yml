@@ -54,5 +54,5 @@ jobs:
         with:
           context: ./image-definition
           push: true
-          tags: ${{ steps.meta.outputs.tags }},${{ steps.extract_cloudflared_image_tag.outputs.image_tag }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
