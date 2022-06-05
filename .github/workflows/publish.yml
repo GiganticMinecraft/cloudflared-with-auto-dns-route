@@ -29,6 +29,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - id: extract_cloudflared_image_tag
+        run: |
+          image_tag="$(grep -P -o "(?<=^FROM cloudflare/cloudflared\:)([0-9]+\.[0-9]+\.[0-9]+)" image-definition/Dockerfile)"
+          echo "::set-output name=image_tag::${image_tag}"
+
       # Docker does not allow uppercase letters for image name, so we must replace repository_owner and so on
       - id: prepare_image_id
         name: Prepare image id's components
@@ -49,5 +54,5 @@ jobs:
         with:
           context: ./image-definition
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }},${{ steps.extract_cloudflared_image_tag.outputs.image_tag }}
           labels: ${{ steps.meta.outputs.labels }}
