@@ -1,4 +1,4 @@
-FROM cloudflare/cloudflared:2022.6.3 as cloudflared-binary
+FROM cloudflare/cloudflared:2022.8.0 as cloudflared-binary
 
 FROM alpine:3.16
 
