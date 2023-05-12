@@ -1,6 +1,6 @@
 FROM cloudflare/cloudflared:2022.11.1 as cloudflared-binary
 
-FROM alpine:3.17
+FROM alpine:3
 
 COPY --from=cloudflared-binary /usr/local/bin/cloudflared /usr/local/bin/
 
