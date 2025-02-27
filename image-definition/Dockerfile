@@ -1,5 +1,5 @@
 FROM mikefarah/yq:4.45.1 as yq
-FROM cloudflare/cloudflared:2025.1.0 as cloudflared-binary
+FROM cloudflare/cloudflared:2025.2.1 as cloudflared-binary
 
 FROM alpine:3.21
 
