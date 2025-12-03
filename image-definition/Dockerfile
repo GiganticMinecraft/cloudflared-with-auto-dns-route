@@ -1,7 +1,7 @@
 FROM mikefarah/yq:4.45.1 as yq
 FROM cloudflare/cloudflared:2025.1.0 as cloudflared-binary
 
-FROM alpine:3.21
+FROM alpine:3.23
 
 COPY --from=cloudflared-binary /usr/local/bin/cloudflared /usr/local/bin/
 
