@@ -1,4 +1,4 @@
-FROM mikefarah/yq:4.49.2 AS yq
+FROM mikefarah/yq:4.50.1 AS yq
 FROM cloudflare/cloudflared:2025.11.1 AS cloudflared-binary
 
 FROM alpine:3.23
