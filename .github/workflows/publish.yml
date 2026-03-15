@@ -7,6 +7,11 @@ on:
     - 'image-definition/**'
     - '.github/workflows/publish.yml'
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -51,9 +56,18 @@ jobs:
             type=raw,value=${{ steps.extract_cloudflared_image_tag.outputs.image_tag }}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         with:
           context: ./image-definition
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          sbom: true
+          provenance: true
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign image with Cosign
+        run: cosign sign --yes ${{ steps.prepare_image_id.outputs.lowercase_id }}@${{ steps.build.outputs.digest }}
