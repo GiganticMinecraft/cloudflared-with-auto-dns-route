@@ -54,6 +54,12 @@ jobs:
           tags: |
             type=sha
             type=raw,value=${{ steps.extract_cloudflared_image_tag.outputs.image_tag }}
+          labels: |
+            org.opencontainers.image.title=cloudflared-with-auto-dns-route
+            org.opencontainers.image.description=Cloudflare Tunnel client with automatic DNS route configuration
+            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.source=https://github.com/GiganticMinecraft/cloudflared-with-auto-dns-route
+            org.opencontainers.image.vendor=GiganticMinecraft
 
       - name: Build and push
         id: build
