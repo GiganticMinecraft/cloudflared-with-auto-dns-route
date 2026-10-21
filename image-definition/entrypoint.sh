@@ -2,6 +2,12 @@
 # shellcheck shell=dash
 set -e
 
+# Until the final exec below, ash is PID 1. PID 1 has no default SIGTERM/SIGINT action,
+# so without a trap a SIGTERM during setup (login, tunnel recreation, DNS routing) would be
+# ignored until SIGKILL. The trap runs once the current foreground command returns.
+trap 'exit 143' TERM
+trap 'exit 130' INT
+
 # based on
 # https://github.com/kory33/oracle-cloud-gp-servers/blob/ec7e8fa1c8206cdc9fb60b5ebe39aef1a659ae18/services/cloudflared/entrypoint.sh
 
@@ -76,6 +82,10 @@ mkdir -p "$(dirname ${TUNNEL_CRED_FILE})"
 recreate_tunnel
 
 tunnel_id=$(get_available_tunnel_id)
+if [ -z "$tunnel_id" ] || [ "$tunnel_id" = "null" ]; then
+  echo "Could not find the id of tunnel ${TUNNEL_NAME} after recreating it."
+  exit 1
+fi
 
 # re-route all domains in ingress-rules to this tunnel.
 echo "Re-routing all domains to the tunnel..."
@@ -83,5 +93,9 @@ yq e ".ingress.[] | select(.hostname != null) | .hostname" "$tmp_tunnel_config_p
   | xargs -n 1 cloudflared tunnel route dns --overwrite-dns "$tunnel_id"
 
 # start the tunnel
+# exec replaces this shell so that cloudflared becomes PID 1 and handles SIGTERM itself
+# (unregister from the edge, wait for in-flight requests up to TUNNEL_GRACE_PERIOD, exit 0).
+# TUNNEL_GRACE_PERIOD is cloudflared's own env var for `tunnel --grace-period`; its default
+# is set in the Dockerfile.
 echo "Starting the tunnel"
-cloudflared tunnel --config "$tmp_tunnel_config_path" --no-autoupdate run "$tunnel_id"
+exec cloudflared tunnel --config "$tmp_tunnel_config_path" --no-autoupdate run "$tunnel_id"
