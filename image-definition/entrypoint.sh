@@ -83,5 +83,14 @@ yq e ".ingress.[] | select(.hostname != null) | .hostname" "$tmp_tunnel_config_p
   | xargs -n 1 cloudflared tunnel route dns --overwrite-dns "$tunnel_id"
 
 # start the tunnel
+# exec replaces this shell so that cloudflared becomes PID 1 and receives SIGTERM directly.
+# Without exec, ash (PID 1) ignores SIGTERM and the container is SIGKILLed after the grace period.
+# --grace-period (a `tunnel` flag, default 30s) is set below Kubernetes' default
+# terminationGracePeriodSeconds (30s) so in-flight requests can drain before SIGKILL.
+# Override with TUNNEL_GRACE_PERIOD.
 echo "Starting the tunnel"
-cloudflared tunnel --config "$tmp_tunnel_config_path" --no-autoupdate run "$tunnel_id"
+exec cloudflared tunnel \
+  --config "$tmp_tunnel_config_path" \
+  --no-autoupdate \
+  --grace-period "${TUNNEL_GRACE_PERIOD:-20s}" \
+  run "$tunnel_id"
