@@ -8,7 +8,7 @@ You may use one of the following way to configure DNS routes to your services. Y
 
 Whichever option you may choose, `cloudflared` container should ask you to login to Cloudflare upon `docker compose up`.
 
-After the DNS routes are configured, the entrypoint `exec`s `cloudflared tunnel run`, so `cloudflared` runs as PID 1 and handles `SIGTERM` itself: it stops accepting new requests and waits up to `TUNNEL_GRACE_PERIOD` (default `20s`, below Kubernetes' default 30s `terminationGracePeriodSeconds`) for in-flight requests before exiting.
+After the DNS routes are configured, the entrypoint `exec`s `cloudflared tunnel run`, so `cloudflared` runs as PID 1 and handles `SIGTERM` itself: it unregisters from the Cloudflare edge (new requests stop reaching it), waits up to `TUNNEL_GRACE_PERIOD` (default `10s`, matching Docker's default stop timeout) for in-flight requests, and exits with code 0. If you raise `TUNNEL_GRACE_PERIOD`, also raise `stop_grace_period` / `terminationGracePeriodSeconds` above it.
 
 ### Mounting `tunnel-config.yml`
 
